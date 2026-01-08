@@ -1,0 +1,122 @@
+---
+title: "World Bank"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+# Install required packages (if not installed)
+install.packages(c("tidyverse", "car", "ggplot2", "corrplot", "stargazer"))
+
+# Load libraries
+library(tidyverse)
+library(car)
+library(ggplot2)
+library(corrplot)
+library(readxl)
+library(stargazer)
+
+# Load the dataset (update the path accordingly)
+data <- read_excel("C:/Users/USER/OneDrive - Institute of Business Administration/Desktop/Econometric/WDI_1970and2010headers.xlsx")
+
+# View the structure of the dataset
+str(data)
+
+# Select the variables relevant to 2010
+selected_vars <- data %>%
+  select(country, GDPPC2005D_10, AdultLit10, PctImprovedWater10, Fertility10, DrPer1000_10, LIFEEXP10) %>%
+  na.omit()  # Remove rows with missing values
+
+# Check summary statistics
+summary(selected_vars)
+
+```
+
+```{r}
+# Load the dataset (update the path accordingly)
+data <- read_excel("C:/Users/USER/OneDrive - Institute of Business Administration/Desktop/Econometric/WDI_1970and2010headers.xlsx")
+
+# View the structure of the dataset
+str(data)
+
+# Select the variables relevant to 2010
+selected_vars <- data %>%
+  select(country, GDPPC2005D_10, AdultLit10, PctImprovedWater10, Fertility10, DrPer1000_10, LIFEEXP10) %>%
+  na.omit()  # Remove rows with missing values
+
+# Check summary statistics
+summary(selected_vars)
+```
+
+```{r}
+# Compute correlation matrix
+cor_matrix <- cor(selected_vars %>% select(-country))
+print(cor_matrix)
+
+# Visualize the correlation matrix
+corrplot(cor_matrix, method="color", type="upper", tl.col="black", tl.srt=45)
+
+```
+
+```{r}
+# Run VIF test
+vif_model <- lm(LIFEEXP10 ~ GDPPC2005D_10 + AdultLit10 + PctImprovedWater10 + Fertility10 + DrPer1000_10, data = selected_vars)
+vif_values <- vif(vif_model)
+print(vif_values)
+
+```
+
+```{r}
+# Histograms to check distributions
+selected_vars %>%
+  gather(key="Variable", value="Value", -country) %>%
+  ggplot(aes(x=Value)) +
+  geom_histogram(bins=30, fill="blue", alpha=0.5) +
+  facet_wrap(~Variable, scales="free") +
+  theme_minimal()
+
+# Scatterplots to check linearity
+ggplot(selected_vars, aes(x=GDPPC2005D_10, y=LIFEEXP10)) + geom_point() + geom_smooth(method="lm")
+ggplot(selected_vars, aes(x=AdultLit10, y=LIFEEXP10)) + geom_point() + geom_smooth(method="lm")
+ggplot(selected_vars, aes(x=PctImprovedWater10, y=LIFEEXP10)) + geom_point() + geom_smooth(method="lm")
+ggplot(selected_vars, aes(x=Fertility10, y=LIFEEXP10)) + geom_point() + geom_smooth(method="lm")
+ggplot(selected_vars, aes(x=DrPer1000_10, y=LIFEEXP10)) + geom_point() + geom_smooth(method="lm")
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
