@@ -1,0 +1,94 @@
+---
+title: "Tractors Analysis"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo:`
+
+```{r}
+# Load necessary libraries
+library(readxl)
+library(stargazer)
+
+# Load dataset
+df <- read_excel("C:\\Users\\USER\\OneDrive - Institute of Business Administration\\Desktop\\Econometric\\Week04TRACTOR7.xlsx")
+
+# Create log-transformed sale price
+df$ln_saleprice <- log(df$saleprice)
+
+# Generate histograms
+par(mfrow=c(1,2))
+hist(df$saleprice, main="Histogram of Sale Price", xlab="Sale Price", col="lightblue", border="black")
+hist(df$ln_saleprice, main="Histogram of Log Sale Price", xlab="Log of Sale Price", col="orange", border="black")
+
+```
+
+```{r}
+install.packages("stargazer") 
+```
+
+```{r}
+# Basic model (excluding `cab` for now)
+model <- lm(ln_saleprice ~ horsepower + age + enghours + diesel + fwd + manual + johndeere + spring + summer + winter, data=df)
+
+# Display results
+summary(model)
+stargazer(model, type="text")
+
+```
+
+```{r}
+# Create squared horsepower variable
+df$horsepower_squared <- df$horsepower^2
+
+# Run the polynomial regression
+model2 <- lm(ln_saleprice ~ horsepower + horsepower_squared + age + enghours + diesel + fwd + manual + johndeere + spring + summer + winter, data=df)
+
+# Display results
+summary(model2)
+stargazer(model, model2, type="text")
+
+```
+
+```{r}
+# Run regression with cab included
+model3 <- lm(ln_saleprice ~ horsepower + horsepower_squared + age + enghours + diesel + fwd + manual + johndeere + spring + summer + winter + cab, data=df)
+
+# Display results
+summary(model3)
+stargazer(model2, model3, type="text")
+
+```
+
+```{r}
+# Create interaction term
+df$enghours_diesel <- df$enghours * df$diesel
+
+# Run regression with interaction term
+model4 <- lm(ln_saleprice ~ horsepower + horsepower_squared + age + enghours + diesel + fwd + manual + johndeere + spring + summer + winter + cab + enghours_diesel, data=df)
+
+# Display results
+summary(model4)
+stargazer(model3, model4, type="text")
+
+```

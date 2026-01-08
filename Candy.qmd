@@ -1,0 +1,161 @@
+---
+title: "Candy"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+library(readxl)
+
+# Load the data
+Week12Candy <- read_excel("C:/Users/USER/Downloads/Week12Candy.xlsx")
+
+# Drop the first four observations
+Week12Candy <- Week12Candy[-c(1:4), ]
+
+```
+
+```{r}
+# Summary stats for each variable
+summary_data <- data.frame(
+  Statistic = c("Mean", "SD", "Min", "Max", "N"),
+  OBS = c(mean(Week12Candy$OBS, na.rm = TRUE), sd(Week12Candy$OBS, na.rm = TRUE), min(Week12Candy$OBS, na.rm = TRUE), max(Week12Candy$OBS, na.rm = TRUE), sum(!is.na(Week12Candy$OBS))),
+  SALES = c(mean(Week12Candy$SALES, na.rm = TRUE), sd(Week12Candy$SALES, na.rm = TRUE), min(Week12Candy$SALES, na.rm = TRUE), max(Week12Candy$SALES, na.rm = TRUE), sum(!is.na(Week12Candy$SALES))),
+  AD = c(mean(Week12Candy$AD, na.rm = TRUE), sd(Week12Candy$AD, na.rm = TRUE), min(Week12Candy$AD, na.rm = TRUE), max(Week12Candy$AD, na.rm = TRUE), sum(!is.na(Week12Candy$AD)))
+)
+
+library(gt)
+summary_data %>%
+  gt() %>%
+  tab_header(title = "Summary Statistics for OBS, SALES, and AD") %>%
+  fmt_number(columns = c(OBS, SALES, AD), decimals = 2)
+
+```
+
+```{r}
+install.packages("gt")
+```
+
+```{r}
+cor.test(Week12Candy$SALES, Week12Candy$AD, method = "pearson")
+
+```
+
+```{r}
+library(ggplot2)
+
+# SALES over time
+ggplot(Week12Candy, aes(x = YEAR, y = SALES)) +
+  geom_line() +
+  labs(title = "Time Series of SALES", x = "Year", y = "SALES") +
+  theme_minimal()
+
+# AD over time
+ggplot(Week12Candy, aes(x = YEAR, y = AD)) +
+  geom_line() +
+  labs(title = "Time Series of AD", x = "Year", y = "AD") +
+  theme_minimal()
+
+```
+
+```{r}
+model <- lm(SALES ~ AD, data = Week12Candy)
+summary(model)
+
+```
+
+```{r}
+Week12Candy$TIMETREND <- 1:nrow(Week12Candy)
+trend_model <- lm(SALES ~ TIMETREND, data = Week12Candy)
+summary(trend_model)
+
+# Plot
+plot(Week12Candy$TIMETREND, Week12Candy$SALES, 
+     main = "Linear Trend: SALES over Time", 
+     xlab = "Time Trend", ylab = "SALES", pch = 19, col = "blue")
+abline(trend_model, col = "red", lwd = 2)
+
+```
+
+```{r}
+Week12Candy$L1_SALES <- c(NA, head(Week12Candy$SALES, -1))
+Week12Candy_dyn <- na.omit(Week12Candy[, c("SALES", "L1_SALES", "AD", "diff1", "diff2", "diff3", "diff4")])
+
+dyn_model_ols <- lm(SALES ~ L1_SALES + AD + diff1 + diff2 + diff3 + diff4, data = Week12Candy_dyn)
+summary(dyn_model_ols)
+
+```
+
+```{r}
+Week12Candy$diff1 <- c(rep(NA, 1), diff(Week12Candy$AD, lag = 1))
+Week12Candy$diff2 <- c(rep(NA, 2), diff(Week12Candy$AD, lag = 2))
+Week12Candy$diff3 <- c(rep(NA, 3), diff(Week12Candy$AD, lag = 3))
+Week12Candy$diff4 <- c(rep(NA, 4), diff(Week12Candy$AD, lag = 4))
+
+distributed_lag_model <- lm(SALES ~ AD + diff1 + diff2 + diff3 + diff4, data = Week12Candy)
+summary(distributed_lag_model)
+
+# Serial correlation test
+install.packages("lmtest")
+library(lmtest)
+bgtest(distributed_lag_model)
+
+```
+
+```{r}
+install.packages("nlme")
+library(nlme)
+
+Week12Candy_clean <- na.omit(Week12Candy[, c("SALES", "AD", "diff1", "diff2", "diff3", "diff4")])
+prais_model <- gls(SALES ~ AD + diff1 + diff2 + diff3 + diff4, 
+                   data = Week12Candy_clean, 
+                   correlation = corAR1())
+summary(prais_model)
+
+```
+
+```{r}
+Week12Candy$L1_SALES <- c(NA, head(Week12Candy$SALES, -1))
+Week12Candy_dyn <- na.omit(Week12Candy[, c("SALES", "L1_SALES", "AD", "diff1", "diff2", "diff3", "diff4")])
+
+dyn_model_ols <- lm(SALES ~ L1_SALES + AD + diff1 + diff2 + diff3 + diff4, data = Week12Candy_dyn)
+summary(dyn_model_ols)
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

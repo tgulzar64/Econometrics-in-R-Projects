@@ -1,0 +1,126 @@
+---
+title: "Bank Analysis"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+# Load necessary libraries
+library(readxl)
+
+# Load the dataset
+file_path <- "C:\\Users\\USER\\OneDrive - Institute of Business Administration\\Desktop\\Econometric\\Banks.xlsx"
+df <- read_excel(file_path)
+
+# Convert relevant columns to numeric
+df$NatlRank <- as.numeric(df$NatlRank)
+df$PctDomAssets <- as.numeric(df$PctDomAssets)
+
+# Run the linear regression
+model <- lm(NatlRank ~ PctDomAssets, data = df)
+
+# Print the summary of the model
+summary(model)
+
+
+```
+
+```{r}
+# Convert relevant columns to numeric
+df$NatlRank <- as.numeric(df$NatlRank)
+df$DomAssetsMil <- as.numeric(df$DomAssetsMil)
+
+# Run the linear regression
+model2 <- lm(NatlRank ~ DomAssetsMil, data = df)
+
+# Print the summary of the model
+summary(model2)
+```
+
+```{r}
+# Load necessary libraries
+library(readxl)
+
+# Load the dataset
+file_path <- "C:/Users/USER/OneDrive - Institute of Business Administration/Desktop/Econometric/Banks.xlsx"
+df <- read_excel(file_path)
+
+# Remove commas and dollar signs from 'DomAssetsMil' before conversion
+df$DomAssetsMil <- gsub("[$,]", "", df$DomAssetsMil)
+df$DomAssetsMil <- as.numeric(df$DomAssetsMil)
+
+# Remove rows with NA values in DomAssetsMil
+df <- df[!is.na(df$DomAssetsMil), ]
+
+# Convert 'NatlRank' to numeric
+df$NatlRank <- as.numeric(df$NatlRank)
+
+# Run the linear regression
+model2 <- lm(NatlRank ~ DomAssetsMil, data = df)
+
+# Print the summary of the model
+summary(model2)
+
+```
+
+```{r}
+
+
+# Load the dataset
+file_path <- "C:/Users/USER/OneDrive - Institute of Business Administration/Desktop/Econometric/Banks.xlsx"
+df <- read_excel(file_path)
+
+# Remove commas and dollar signs from 'DomAssetsMil' before conversion
+df$DomAssetsMil <- gsub("[$,]", "", df$DomAssetsMil)
+df$DomAssetsMil <- as.numeric(df$DomAssetsMil)
+
+# Remove rows with NA values in DomAssetsMil
+df <- df[!is.na(df$DomAssetsMil), ]
+
+# Convert 'NatlRank' to numeric
+df$NatlRank <- as.numeric(df$NatlRank)
+
+# Run the linear regression
+model5 <- lm(NatlRank ~ DomAssetsMil, data = df)
+
+# Print the summary of the model
+summary(model5)
+options(scipen=999)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

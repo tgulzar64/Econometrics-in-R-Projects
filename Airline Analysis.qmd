@@ -1,0 +1,86 @@
+---
+title: "Airline Data"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+\
+\
+
+```{r}
+# Install necessary packages (run this only once if not already installed)
+install.packages("readxl")
+install.packages("stargazer")
+
+# Load libraries
+library(readxl)
+library(stargazer)
+
+# Read the Excel file from your system path
+Week11Airfare <- read_excel("C:/Users/USER/OneDrive - Institute of Business Administration/Desktop/Econometric/Week11Airfare.xlsx")
+
+# Fit the full model (with year dummy variables)
+lm_model_full <- lm(fare ~ dist + passen + bmktshr + y98 + y99 + y00, data = Week11Airfare)
+
+# Fit the reduced model (without year dummies)
+lm_model_reduced <- lm(fare ~ dist + passen + bmktshr, data = Week11Airfare)
+
+# Display both models side by side
+stargazer(lm_model_full, lm_model_reduced, type = "text",
+          title = "Linear Regression Results: Full vs. Reduced Model",
+          column.labels = c("Full Model", "Reduced Model"))
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

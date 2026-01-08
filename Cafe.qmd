@@ -1,0 +1,127 @@
+---
+title: "Cafe Data"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+# Load necessary libraries
+library(readxl)
+library(ggplot2)
+library(forecast)
+library(dplyr)
+
+# Set file path and import data
+file_path <- "C:/Users/USER/OneDrive - Institute of Business Administration/Desktop/Econometric/Week13CafeData.xlsx"
+Week13CafeData <- read_excel(file_path)
+
+# View data structure
+str(Week13CafeData)
+summary(Week13CafeData)
+
+# Plot pizza sales over time
+ggplot(Week13CafeData, aes(x = Time_t, y = PizzaSlices)) +
+  geom_line(color = "tomato", size = 1) +
+  labs(title = "Pizza Slices Sold Over Time",
+       x = "Time (days)", y = "Pizza Slices Sold") +
+  theme_minimal()
+
+# Linear trend model
+trend_model <- lm(PizzaSlices ~ Time_t, data = Week13CafeData)
+summary(trend_model)
+
+# Plot trend with linear line
+ggplot(Week13CafeData, aes(x = Time_t, y = PizzaSlices)) +
+  geom_point(color = "gray70") +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(title = "Linear Trend in Pizza Sales Over Time",
+       x = "Time (Days)", y = "Pizza Slices Sold") +
+  theme_minimal()
+
+# Set day-of-week as factor with order
+Week13CafeData$DayOfWeek <- factor(Week13CafeData$DayOfWeek,
+                                   levels = c("Mon", "Tue", "Wed", "Thu", "Fri"))
+
+# Plot sales by day of the week
+ggplot(Week13CafeData, aes(x = Time_t, y = PizzaSlices)) +
+  geom_line(color = "tomato") +
+  facet_wrap(~ DayOfWeek, nrow = 1) +
+  labs(title = "Pizza Sales Over Time by Day of the Week (Mon–Fri)",
+       x = "Time (Days)", y = "Pizza Slices Sold") +
+  theme_minimal()
+
+# Build regression with weekday dummies
+weekday_dummies <- model.matrix(~ DayOfWeek, data = Week13CafeData)[, -1]
+fit <- auto.arima(Week13CafeData$PizzaSlices, xreg = weekday_dummies)
+summary(fit)
+
+# Forecast next 4 days: Tue, Wed, Thu, Fri (Days 63–66)
+future_days <- data.frame(
+  DayOfWeek = factor(c("Tue", "Wed", "Thu", "Fri"),
+                     levels = levels(Week13CafeData$DayOfWeek))
+)
+future_dummies <- model.matrix(~ DayOfWeek, data = future_days)[, -1]
+
+# Forecast
+forecast_results <- forecast(fit, xreg = future_dummies, h = 4)
+print(forecast_results)
+autoplot(forecast_results) +
+  labs(title = "Forecast of Pizza Sales for Days 63–66",
+       y = "Pizza Slices", x = "Future Days") +
+  theme_minimal()
+
+```
+
+![](images/clipboard-1069241649.png)
+
+![](images/clipboard-1069241649.png)
+
+```{r}
+install.packages("forecast")
+install.packages("readxl")
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

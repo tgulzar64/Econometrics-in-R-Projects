@@ -1,0 +1,62 @@
+---
+title: "Week 10 LOANS"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+# Load required libraries
+library(readxl)
+library(dplyr)
+
+# Load the dataset using the full path
+data <- read_excel("C:/Users/USER/Downloads/Week0910CALoans (1).xlsx")
+
+# Select relevant variables and drop NA rows for modeling
+model_data <- data %>%
+  select(Default, Recession, New, RealEstate, DisbursementGross, Portion) %>%
+  na.omit()
+
+# Convert Default to factor for logistic regression
+model_data$Default <- as.factor(model_data$Default)
+
+# Run logistic regression model
+loan_model <- glm(Default ~ Recession + New + RealEstate + DisbursementGross + Portion,
+                  data = model_data, family = binomial)
+
+# Summarize the model
+summary(loan_model)
+
+# Optional: calculate predicted probabilities
+model_data$predicted_prob <- predict(loan_model, type = "response")
+
+# View head of data with predicted probabilities
+head(model_data)
+
+```
+
+The `echo: false` option disables the printing of code (only output is displayed)
+
+\`\`\`{r}\
+
+\
+
+'''
+
+\
+
+\

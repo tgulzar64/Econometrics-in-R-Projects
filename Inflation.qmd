@@ -1,0 +1,87 @@
+---
+title: "Inflation"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+
+#install.packages("zoo")
+library(zoo)
+#install.packages("readxl")
+library(readxl)
+Week12Inflation <- read_excel("/Users/akanshasinha/Documents/Econometrics/Week12Inflation.xlsx")
+
+Week12Inflation$Inflation_MA3 <- rollmean(Week12Inflation$InflationAvg, k = 3, fill =
+                                            NA, align = "right")
+library(ggplot2)
+ggplot(Week12Inflation, aes(x = Year)) +
+  geom_line(aes(y = InflationAvg), color = "blue", size = 1) +
+  geom_line(aes(y = Inflation_MA3), color = "red", size = 1, linetype = "dashed") +
+  labs(title = "Inflation with 3-Period Moving Average",
+       y = "Inflation Rate", x = "Time") +
+  theme_minimal()
+#Weighted moving average
+# Define custom weights: oldest year = 0.2, middle = 0.3, most recent = 0.5
+weights <- c(0.2, 0.3, 0.5)
+# Apply the weighted moving average
+Week12Inflation$Inflation_WMA3 <- rollapply(
+  Week12Inflation$InflationAvg,
+  width = 3,
+  FUN = function(x) sum(x * weights),
+  fill = NA,
+  align = "right"
+)
+#LINEAR TREND
+library(ggplot2)
+ggplot(Week12Inflation, aes(x = Year, y = InflationAvg)) +
+  geom_line(color = "blue", size = 1) + # actual data
+  geom_smooth(method = "lm", color = "red", linetype = "dashed", se = FALSE) + #trend line
+labs(title = "Inflation with Linear Trend Line",
+     x = "Time (Years since 1960)", y = "Inflation Rate") +
+  theme_minimal()
+# Fit the linear model
+trend_model <- lm(InflationAvg ~ Year, data = Week12Inflation)
+# Add fitted values (trend line) to your dataset
+Week12Inflation$Inflation_Trend <- fitted(trend_model)
+ggplot(Week12Inflation, aes(x = Year)) +
+  geom_line(aes(y = InflationAvg), color = "blue") +
+  geom_line(aes(y = Inflation_Trend), color = "red", linetype = "dashed") +
+  labs(title = "Inflation and Linear Trend",
+       x = "Time", y = "Inflation Rate") +
+  theme_minimal()
+
+
+
+
+
+
+# Add trend line
+trend_model <- lm(InflationAvg ~ Year, data = Week12Inflation)
+Week12Inflation$Inflation_Trend <- fitted(trend_model)
+
+ggplot(Week12Inflation, aes(x = Year)) +
+  geom_line(aes(y = InflationAvg), color = "blue") +
+  geom_line(aes(y = Inflation_Trend), color = "red", linetype = "dashed") +
+  labs(title = "Inflation and Linear Trend",
+       x = "Time", y = "Inflation Rate") +
+  theme_minimal()
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

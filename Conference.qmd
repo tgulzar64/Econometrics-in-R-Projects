@@ -1,0 +1,156 @@
+---
+title: "Consumption"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+# Load required libraries
+library(readxl)
+
+# Define file path
+file_path <- "C:/Users/USER/OneDrive - Institute of Business Administration/Desktop/Econometric/Final Project/CONS9.xls"
+
+# Load the Excel file
+CONS9 <- read_excel(file_path)
+
+# Run regression for subset of data (year < 2004)
+model <- lm(con ~ dpi + aaa, data = subset(CONS9, year < 2004))
+
+# View summary of results
+summary(model)
+
+```
+
+```{r}
+CONS9$p <- NA  # make sure the column exists
+CONS9$p[CONS9$year < 2004] <- predict(model)
+# Subset data for plotting (only before 2004)
+plot_data <- subset(CONS9, year < 2004)
+
+# Plot
+plot(plot_data$year, plot_data$con, type = "l", col = "blue", lwd = 2,
+     ylab = "Consumption", xlab = "Year", main = "Actual vs Predicted CON")
+lines(plot_data$year, plot_data$p, col = "red", lwd = 2, lty = 2)
+legend("topleft", legend = c("Actual CON", "Predicted CON"),
+       col = c("blue", "red"), lty = c(1, 2), lwd = 2)
+library(ggplot2)
+
+# Subset and reshape for ggplot
+plot_data <- subset(CONS9, year < 2004)
+
+ggplot(plot_data, aes(x = year)) +
+  geom_line(aes(y = con, color = "Actual CON"), size = 1.2) +
+  geom_line(aes(y = p, color = "Predicted CON"), size = 1.2, linetype = "dashed") +
+  labs(title = "Actual vs Predicted Consumption",
+       x = "Year", y = "CON",
+       color = "") +
+  theme_minimal()
+
+
+```
+
+```{r}
+conf_int <- predict(model, newdata = CONS9, interval = "confidence")
+
+# Add lower and upper bounds to dataset
+CONS9$lower_ci <- conf_int[, "lwr"]
+CONS9$upper_ci <- conf_int[, "upr"]
+# Prediction interval for an individual future observation
+pred_int <- predict(model, newdata = CONS9, interval = "prediction")
+CONS9$pred_lower <- pred_int[, "lwr"]
+CONS9$pred_upper <- pred_int[, "upr"]
+
+# Optional: View first few rows
+head(CONS9)
+```
+
+```{r}
+# Fit the model (if not already done)
+model <- lm(con ~ dpi + aaa, data = CONS9)
+
+# Get confidence and prediction intervals
+conf_int <- predict(model, newdata = CONS9, interval = "confidence")
+pred_int <- predict(model, newdata = CONS9, interval = "prediction")
+
+# Add to your dataframe using original column names
+CONS9$predicted    <- conf_int[, "fit"]
+CONS9$lower_ci     <- conf_int[, "lwr"]
+CONS9$upper_ci     <- conf_int[, "upr"]
+CONS9$pred_lower   <- pred_int[, "lwr"]
+CONS9$pred_upper   <- pred_int[, "upr"]
+
+# Load ggplot2
+library(ggplot2)
+
+# Time series plot (using Year as x-axis)
+ggplot(CONS9, aes(x = year, y = con)) +
+  geom_point(color = "darkgray", size = 2) +  # actual data
+  geom_line(aes(y = predicted), color = "blue", size = 1) +  # fitted line
+
+  # Prediction interval (wider, goes underneath)
+  geom_ribbon(aes(ymin = pred_lower, ymax = pred_upper), 
+              fill = "lightgray", alpha = 0.4) +
+
+  # Confidence interval (narrower, on top)
+  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci), 
+              fill = "lightblue", alpha = 0.5) +
+
+  labs(title = "Consumption Over Time with Confidence & Prediction Intervals",
+       x = "Year",
+       y = "Consumption (con)") +
+  theme_minimal()
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
