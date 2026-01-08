@@ -43,9 +43,9 @@ This project investigates economic aspects of conferences or events, such as att
 
 ---
 
-### 📊 Econometrics Lab (Foundations)
-**Focus:** Core econometric concepts and implementation  
-A structured lab-style project reinforcing foundational econometric skills, including regression estimation, hypothesis testing, interpretation of coefficients, and diagnostic checks. Designed to strengthen technical fluency and intuition.
+### 📊 Tractor Analysis
+**Focus:** Regression Analysis and Hypothesis Testing 
+A structured project reinforcing  econometric skills, including regression estimation, hypothesis testing, interpretation of coefficients, and diagnostic checks. Designed to strengthen technical fluency and intuition.
 
 ---
 
