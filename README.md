@@ -79,5 +79,12 @@ This repository is intended to:
 - Demonstrate applied econometrics skills using real-world data  
 - Connect economic theory with empirical evidence  
 - Support academic coursework, research, and portfolio presentation  
-- Showcase clear, policy-aware interpretation of econometric results  
+- Showcase clear, policy-aware interpretation of econometric results
+
+## 📄 Copyright & Usage
+
+© 2025 Talha Gulzar. All rights reserved.
+
+This project is shared for **portfolio and educational purposes only**. Unauthorized copying, distribution, or use of this code or analysis is prohibited without explicit permission from the author.
+
 
